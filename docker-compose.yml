@@ -5,12 +5,14 @@ services:
     build:
       dockerfile: ./DockerFile
       context: .
+      target: ${NODE_ENV}
     ports:
       - '3000:3000'
     volumes:
       - ".:/usr/app"
     depends_on:
       - database
+      - queue
     networks:
       rede:
   database:
@@ -19,6 +21,16 @@ services:
       - '${DB_PORT}:27017'
     volumes:
       - './data:/data/db'
+    networks:
+      rede:
+  queue:
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - '15672:15672'
+      - '${RABBITMQL_PORT}:5672'
     networks:
       rede:
 networks:

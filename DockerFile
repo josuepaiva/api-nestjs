@@ -1,13 +1,33 @@
-FROM node:alpine
+FROM node:alpine As development
 
+RUN npm config set cache /home/node/app/.npm-cache --global
+RUN npm i -g @nestjs/cli@7.4.1
 RUN mkdir -p /usr/app
+RUN rm -rf ./node_modules
+
 WORKDIR /usr/app
 
+# COPY . ./
 COPY package.json ./
 RUN yarn
-
-COPY . ./
 
 EXPOSE ${PORT_SERVER}
 
 CMD yarn start:dev
+
+FROM node:alpine as production
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /usr/app
+
+COPY package*.json ./
+
+RUN yarn install --production
+
+COPY . .
+
+COPY --from=development /usr/app/dist ./dist
+
+CMD ["node", "dist/main"]
