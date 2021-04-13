@@ -35,3 +35,6 @@ lerna-debug.log*
 
 # Mongodb
 data
+
+# Variables environment
+.env
