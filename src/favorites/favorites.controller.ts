@@ -8,12 +8,15 @@ import {
   UnauthorizedException,
   UseFilters,
 } from '@nestjs/common';
+
+import { ApiTags } from '@nestjs/swagger';
 import { FavoritesService } from './favorites.service';
 import { QueueService } from '../queue/queue.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FavoriteDto } from './dto/favorite.dto';
 import config from '../configs/config';
 
+@ApiTags('favorites')
 @Controller('favorites')
 export class FavoritesController {
   constructor(

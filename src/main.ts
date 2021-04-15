@@ -8,10 +8,10 @@ import config from './configs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configSwagger = new DocumentBuilder()
-    .setTitle('Test example')
+    .setTitle('Teste api example')
     .setDescription('The test API description')
     .setVersion('1.0')
-    .addTag('test api')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, configSwagger);
   SwaggerModule.setup('api', app, document);

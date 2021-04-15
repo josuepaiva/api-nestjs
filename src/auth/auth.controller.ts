@@ -5,6 +5,9 @@ import { CredentialsDto } from './dto/credentials.dto';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
