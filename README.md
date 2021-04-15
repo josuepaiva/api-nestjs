@@ -28,6 +28,26 @@
 
 ## Instalação com docker
 
+#### Variáveis do .env
+* PORT_SERVER - porta que o servidor nest irá rodar
+* DB_HOST - host db no formato mongodb://host/dbname
+* DB_PORT - porta que será exposta do container
+* URL_SHOPIFY - url para pegar os produtos da shopify
+* SECRET - secredo usado no token jwt
+* NODE_ENV - pode ser production ou development
+* EXPIRE - tempo de expiração do token jwt
+* RABBITMQL_PORT- porta que será exposta o container do rabbitmql
+* QUEUE_URL - url da fila no formato amqp://user:user@host
+* QUEUE_NAME - nome da fila é obrigatório ter
+* EXCHANGE_NAME - nome da exchange é obrigatório ter
+* EMAIL_HOST - host do email exemplo smtp.mailtrap.io
+* EMAIL_PORT - porta do serviço de email
+* EMAIL_USER - usuário do provedor de email
+* EMAIL_PASS - senha do provedor de email
+* TIMEOUT - timeout das requisições do HttpModule
+* RETRIES - quantidade de tentativas usadas no HttpModule
+* WAIT_SEND_EMAIL - tempo de espera em milesegundos para o envio do email
+
 1. Instalar o docker.
 2. Instalar o `docker-compose`.
 
