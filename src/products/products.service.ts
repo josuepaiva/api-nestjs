@@ -1,7 +1,6 @@
 import { Injectable, HttpService } from '@nestjs/common';
-const URL =
-  'https://269a1ec67dfdd434dfc8622a0ed77768:4e788173c35d04421ab4793044be622f@send4-avaliacao.myshopify.com/admin/api/2020-01/products.json';
-
+import config from '../configs/config';
+const URL = config.urlShoppify;
 @Injectable()
 export class ProductsService {
   constructor(private httpService: HttpService) {}
@@ -9,5 +8,25 @@ export class ProductsService {
   async getAllProducts() {
     const response = await this.httpService.get(URL).toPromise();
     return response.data;
+  }
+
+  async getById(id: string) {
+    const result = URL.split('.json');
+    const url = `${result[0]}/${id}.json`;
+    const response = await this.httpService.get(url).toPromise();
+    return response.data;
+  }
+
+  async existProduct(id: string): Promise<boolean> {
+    const result = URL.split('.json');
+    const url = `${result[0]}/${id}.json`;
+    try {
+      const response = await this.httpService.get(url).toPromise();
+      if (response) {
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 }

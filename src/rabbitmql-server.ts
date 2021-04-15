@@ -1,14 +1,18 @@
 import { Connection, Channel, connect, Message } from 'amqplib';
+import config from './configs/config';
 
 export default class RabbitmqServer {
   private conn: Connection;
   private channel: Channel;
-
   constructor(private uri: string) {}
 
   async start(): Promise<void> {
     this.conn = await connect(this.uri);
     this.channel = await this.conn.createChannel();
+    this.channel.assertExchange(config.exchangeName, 'topic', {
+      durable: true,
+    });
+    this.channel.assertQueue(config.queueName, { exclusive: false });
   }
 
   async publishInQueue(queue: string, message: string) {

@@ -1,31 +1,87 @@
-import { Controller, Body, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Get,
+  Req,
+  Post,
+  UseGuards,
+  UnauthorizedException,
+  UseFilters,
+} from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
+import { QueueService } from '../queue/queue.service';
 import { AuthGuard } from '@nestjs/passport';
-import { Favorite } from './favorite';
+import { FavoriteDto } from './dto/favorite.dto';
+import config from '../configs/config';
 
 @Controller('favorites')
 export class FavoritesController {
-  constructor(private readonly favoritesService: FavoritesService) {}
-  @Get(':id')
+  constructor(
+    private readonly favoritesService: FavoritesService,
+    private queueRabbit: QueueService,
+  ) {}
+  @Get()
   @UseGuards(AuthGuard())
-  async getAllFavorites(@Param('id') id: string): Promise<any[]> {
-    return this.favoritesService.listarTodos(id);
+  async getAllFavorites(@Req() { user }): Promise<any[]> {
+    if (user === null) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+    const userId: string = user.id;
+    const favorites = await this.favoritesService.listarFavorites(userId);
+    return favorites;
   }
   @Post('/favorite')
   @UseGuards(AuthGuard())
-  async favor(@Body() favorite: Favorite): Promise<{ message: string }> {
-    await this.favoritesService.favoritar(favorite);
+  async favor(
+    @Req() { user },
+    @Body() favorite: FavoriteDto,
+  ): Promise<{ message: string }> {
+    if (user === null) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+
+    const userId: string = user.id;
+    Object.assign(favorite, { userId });
+
+    if ((await this.favoritesService.favoritar(favorite)) === 1) {
+      const products = await this.favoritesService.listarFavorites(userId);
+      await this.queueRabbit.publishInQueue(
+        config.queueName,
+        JSON.stringify({ user, products }),
+      );
+      return {
+        message: 'Favoritado com sucesso',
+      };
+    }
     return {
-      message: 'Favoritado com sucesso',
+      message: 'Falha ao favoritar produto',
     };
   }
 
   @Post('/disfavor')
   @UseGuards(AuthGuard())
-  async disfavor(@Body() favorite: Favorite): Promise<{ message: string }> {
-    await this.favoritesService.desFavoritar(favorite);
+  async disfavor(
+    @Req() { user },
+    @Body() favorite: FavoriteDto,
+  ): Promise<{ message: string }> {
+    if (user === null) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+    const userId: string = user.id;
+    Object.assign(favorite, { userId });
+
+    if ((await this.favoritesService.desFavoritar(favorite)) === 1) {
+      const products = await this.favoritesService.listarFavorites(userId);
+      await this.queueRabbit.publishInQueue(
+        config.queueName,
+        JSON.stringify({ user, products }),
+      );
+      return {
+        message: 'Desfavoritado com sucesso',
+      };
+    }
     return {
-      message: 'Desfavoritado com sucesso',
+      message: 'Falha ao desfavoritar',
     };
   }
 }

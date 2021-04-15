@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user';
+import { UserDto } from './dto/user.dto';
+import { UserInterface } from './interfaces/user.interface';
 import { CredentialsDto } from '../auth/dto/credentials.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -9,27 +11,28 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async listarTodos(): Promise<User[]> {
+  async listAll(): Promise<UserInterface[]> {
     return this.userModel.find().exec();
   }
 
-  async criar(user: User): Promise<User> {
+  async create(user: UserDto): Promise<UserInterface> {
+    console.log('user created ', user);
     const userCreated = new this.userModel(user);
     return userCreated.save();
   }
 
-  async buscarPorId(id: string): Promise<User> {
+  async findById(id: string): Promise<UserInterface> {
     return this.userModel.findById(id, { password: 0, __v: 0, salt: 0 }).exec();
   }
 
-  async buscarPorEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<UserInterface> {
     return this.userModel.findOne({ email }).exec();
   }
 
-  async checkCredentials(credentials: CredentialsDto): Promise<User> {
+  async checkCredentials(credentials: CredentialsDto): Promise<UserInterface> {
     const { email, password } = credentials;
-    const user: User = new this.userModel(await this.buscarPorEmail(email));
-
+    const user: UserInterface = await this.findByEmail(email);
+    console.log('checkCredentials', user);
     if (user && (await this.checkPassword(password, user))) {
       return user;
     } else {
@@ -37,11 +40,11 @@ export class UsersService {
     }
   }
 
-  async atualizar(id: string, User: User): Promise<User> {
-    return this.userModel.findByIdAndUpdate(id, User).exec();
+  async update(id: string, user: UserDto): Promise<UserInterface> {
+    return this.userModel.findByIdAndUpdate(id, user).exec();
   }
 
-  async remover(id: string) {
+  async remove(id: string) {
     const userDeleted = this.userModel.findOneAndDelete({ _id: id }).exec();
 
     return (await userDeleted).remove();
@@ -49,7 +52,7 @@ export class UsersService {
 
   private async checkPassword(
     passwordInput: string,
-    user: User,
+    user: UserInterface,
   ): Promise<boolean> {
     const { salt, password } = user;
     const hash = await bcrypt.hash(passwordInput, salt);

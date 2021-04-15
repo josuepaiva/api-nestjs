@@ -1,15 +1,19 @@
-FROM node:alpine As development
+FROM node As development
 
 RUN npm config set cache /home/node/app/.npm-cache --global
 RUN npm i -g @nestjs/cli@7.4.1
 RUN mkdir -p /usr/app
-RUN rm -rf ./node_modules
+RUN apt-get install openssl
+ENV DOCKERIZE_VERSION v0.6.1
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 WORKDIR /usr/app
 
 # COPY . ./
 COPY package.json ./
-RUN yarn
+RUN yarn --install.no-lockfile true
 
 EXPOSE ${PORT_SERVER}
 

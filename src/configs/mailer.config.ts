@@ -1,16 +1,11 @@
-import { MailerOptions } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-import * as path from 'path';
+class Configs {
+  public host = process.env.EMAIL_HOST;
+  public port = parseInt(process.env.EMAIL_PORT);
+  public user = process.env.EMAIL_USER;
+  public password = process.env.EMAIL_PASS;
+}
 
-export const mailerConfig: MailerOptions = {
-  template: {
-    dir: path.resolve(__dirname, '..', '..', 'templates'),
-    adapter: new HandlebarsAdapter(),
-    options: {
-      extName: '.hbs',
-      layoutsDir: path.resolve(__dirname, '..', '..', 'templates'),
-    },
-  },
-  transport: `smtps://user@domain.com:pass@smtp.domain.com`,
-};
+export default new Configs();

@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
 import { User } from './user';
 import { UsersService } from './users.service';
+import { UserInterface } from '../users/interfaces/user.interface';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
@@ -18,28 +18,28 @@ export class UsersController {
 
   @Get()
   @UseGuards(AuthGuard())
-  async listarTodos(): Promise<User[]> {
-    return this.userService.listarTodos();
+  async listAll(): Promise<UserInterface[]> {
+    return this.userService.listAll();
   }
 
   @Get(':id')
   @UseGuards(AuthGuard())
-  async buscarPorId(@Param('id') id: string): Promise<User> {
-    return this.userService.buscarPorId(id);
+  async findById(@Param('id') id: string): Promise<UserInterface> {
+    return this.userService.findById(id);
   }
 
   @Put(':id')
   @UseGuards(AuthGuard())
-  async atualizar(
+  async update(
     @Param('id') id: string,
     @Body() userAtualizado: User,
-  ): Promise<User> {
-    return this.userService.atualizar(id, userAtualizado);
+  ): Promise<UserInterface> {
+    return this.userService.update(id, userAtualizado);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard())
-  async remover(@Param('id') id: string): Promise<User> {
-    return this.userService.remover(id);
+  async remove(@Param('id') id: string): Promise<UserInterface> {
+    return this.userService.remove(id);
   }
 }

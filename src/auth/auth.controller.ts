@@ -1,5 +1,6 @@
 import { Controller, Post, Get, Body, UseGuards, Req } from '@nestjs/common';
 import { User } from '../users/user';
+import { UserDto } from '../users/dto/user.dto';
 import { CredentialsDto } from './dto/credentials.dto';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -8,7 +9,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('/signup')
-  async signUp(@Body() user: User): Promise<{ message: string }> {
+  async signUp(@Body() user: UserDto): Promise<{ message: string }> {
     await this.authService.signUp(user);
     return {
       message: 'Cadastro realizado com sucesso',

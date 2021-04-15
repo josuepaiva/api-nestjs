@@ -1,19 +1,26 @@
 import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import RabbitmqServer from './rabbitmql-server';
-import { Agenda } from 'agenda';
+import EmailPromise from './email/emailPromise';
+import config from './configs/config';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  const configSwagger = new DocumentBuilder()
+    .setTitle('Test example')
+    .setDescription('The test API description')
+    .setVersion('1.0')
+    .addTag('test api')
+    .build();
+  const document = SwaggerModule.createDocument(app, configSwagger);
+  SwaggerModule.setup('api', app, document);
 
-  const server = new RabbitmqServer('amqp://admin:admin@queue');
+  await app.listen(3000);
+  const server = new RabbitmqServer(config.queueUrl);
   await server.start();
-  await server.consume('nest', (message) =>
-    // (async function() {
-    //   await Agenda.start(); // Start Agenda instance
-    //   await Agenda.schedule('in 2 minutes', 'log hello medium', {name: 'Medium'}); // Run the dummy job in 10 minutes and passing data.
-    // })();
-    console.log(message.content.toString()),
-  );
+  await server.consume(config.queueName, ({ content }) => {
+    EmailPromise.send(config.waitSendEmail, content.toString());
+  });
 }
 bootstrap();

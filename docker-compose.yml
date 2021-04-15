@@ -1,4 +1,4 @@
-version: "3"
+version: "3.4"
 
 services:
   app:
@@ -6,6 +6,8 @@ services:
       dockerfile: ./DockerFile
       context: .
       target: ${NODE_ENV}
+    # command: bash -c 'yarn start:dev'
+    command: sh -c "dockerize -wait tcp://queue:5672 -timeout 300s -wait-retry-interval 5s && yarn start:dev"
     ports:
       - '3000:3000'
     volumes:
@@ -13,6 +15,7 @@ services:
     depends_on:
       - database
       - queue
+    restart: on-failure
     networks:
       rede:
   database:
