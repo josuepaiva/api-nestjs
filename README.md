@@ -22,7 +22,7 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## Descrição
 
 A API é capaz de realizar consultas de produtos na shopify através de credenciais passadas, favoritar produtos, desfavoritar produtos e mostrar produtos favoritados.
 
