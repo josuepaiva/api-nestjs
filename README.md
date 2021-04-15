@@ -78,7 +78,7 @@
 $ yarn
 ```
 
-## Running the app
+## Rodando o app
 
 ```bash
 # development
@@ -101,7 +101,7 @@ $ yarn test:e2e
 $ yarn test:cov
 ```
 
-## Documentation
+## Documentação
 Após levantar a api acessar http://localhost:${PORT_SERVER}/api
 ## License
 
