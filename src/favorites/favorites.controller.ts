@@ -6,7 +6,6 @@ import {
   Post,
   UseGuards,
   UnauthorizedException,
-  UseFilters,
 } from '@nestjs/common';
 
 import { ApiTags } from '@nestjs/swagger';
