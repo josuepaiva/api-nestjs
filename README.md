@@ -24,7 +24,10 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A API é capaz de realizar consultas de produtos na shopify através de credenciais passadas, favoritar produtos, desfavoritar produtos e mostrar produtos favoritados.
+
+### Obs:
+Foi utilizado o (https://mailtrap.io/)[mailtrapio] para simular o recebimento de emails
 
 ## Instalação com docker
 
