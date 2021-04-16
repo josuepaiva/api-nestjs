@@ -16,7 +16,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, configSwagger);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  await app.listen(config.port);
   const server = new RabbitmqServer(config.queueUrl);
   await server.start();
   await server.consume(config.queueName, ({ content }) => {

@@ -6,6 +6,7 @@ class Config {
   expire: number;
   timeout: number;
   retries: number;
+  port: number;
   waitSendEmail: number;
   queueName: string;
   queueUrl: string;
@@ -14,6 +15,7 @@ class Config {
   constructor() {
     dotenv.config();
     this.dbhost = process.env.DB_HOST;
+    this.port = parseInt(process.env.PORT_SERVER);
     this.secret = process.env.SECRET;
     this.timeout = parseInt(process.env.TIMEOUT);
     this.expire = parseInt(process.env.EXPIRE);

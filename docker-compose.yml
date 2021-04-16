@@ -7,9 +7,9 @@ services:
       context: .
       target: ${NODE_ENV}
     # command: bash -c 'yarn start:dev'
-    command: sh -c "dockerize -wait tcp://queue:5672 -timeout 300s -wait-retry-interval 5s && yarn start:dev"
+    command: sh -c "dockerize -wait tcp://queue:5672 -timeout 300s -wait-retry-interval 5s && yarn && yarn start:dev"
     ports:
-      - '3000:3000'
+      - ${PORT_SERVER}:${PORT_SERVER}
     volumes:
       - ".:/usr/app"
     depends_on:
